@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bind9
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: bind9
+  template:
+    metadata:
+      labels:
+        app: bind9
+    spec:
+      hostNetwork: true
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+      containers:
+        - name: bind9
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports:
+            - containerPort: 63
+              protocol: TCP
+            - containerPort: 63
+              protocol: UDP
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/bind/named.conf
+              subPath: named.conf
+            - name: config-volume
+              mountPath: /etc/rndc.key
+              subPath: rndc.key
+            - name: config-volume
+              mountPath: /etc/rndc.conf
+              subPath: rndc.conf
+      volumes:
+        - name: config-volume
+          configMap:
+            name: bind9-config

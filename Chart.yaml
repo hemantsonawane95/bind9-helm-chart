@@ -1,0 +1,7 @@
+apiVersion: v2
+name: bind9
+namespace: openstack 
+description: A Helm chart for Kubernetes to deploy BIND9 DNS server
+type: application
+version: 0.1.0
+appVersion: 9.16
